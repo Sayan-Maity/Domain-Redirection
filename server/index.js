@@ -15,7 +15,14 @@ const PORT = process.env.PORT || 3001;
 app.use(express.json());
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: function (origin, callback) {
+      // Allow specific origins or allow requests with no origin (like Postman)
+      if (origin === "http://localhost:5173" || origin === "https://domainshift.vercel.app/" || !origin) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true,
   })
 );
