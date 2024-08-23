@@ -60,8 +60,8 @@ const Login = ({ userAddress, setUserAddress }) => {
         setLoading(false);
         toast.error("Couldn't connect, Authentication failed!");
       }
-
     } catch (error) {
+      setLoading(false);
       toast.error("Error during authentication:", error);
     }
   };
