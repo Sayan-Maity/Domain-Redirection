@@ -25,6 +25,10 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use("/api/urls", urlRoutes);
 app.use("/api/auth", authRoutes);
 
+app.get("/", (req, res) => {
+  res.send("Welcome to Domain Shift Server 😀");
+})
+
 // Redirect:
 app.get("/:domain", async (req, res) => {
   const domain = req.params.domain;
