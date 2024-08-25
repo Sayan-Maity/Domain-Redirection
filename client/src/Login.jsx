@@ -23,7 +23,6 @@ const Login = ({
 
     try {
       setLoading(true);
-
       const provider = new Web3Provider(window.ethereum);
 
       try {
@@ -67,7 +66,7 @@ const Login = ({
       try {
         const message = siweMessage.prepareMessage();
         signature = await signer.signMessage(message);
-      } catch (error) {
+      } catch (err) {
         toast.error("Message signing failed.");
       }
 
@@ -89,11 +88,11 @@ const Login = ({
         } else {
           toast.error("Couldn't connect, Authentication failed!");
         }
-      } catch (error) {
+      } catch (err) {
         toast.error("Verification with backend failed.");
       }
-    } catch (error) {
-      toast.error(`Error during authentication: ${error.message}`);
+    } catch (err) {
+      toast.error(`Error during authentication`);
     } finally {
       setLoading(false);
     }

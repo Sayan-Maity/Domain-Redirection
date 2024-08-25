@@ -53,8 +53,6 @@ const UrlForm = ({ userAddress, isAuthenticated }) => {
   const verifyENSOwnership = async (domain, userWalletAddress) => {
     try {
       const provider = new InfuraProvider('mainnet', INFURA_API_KEY);
-
-      // Resolve ENS domain
       const resolvedAddress = await provider.resolveName(domain);
 
       if (resolvedAddress && userWalletAddress.toLowerCase() === resolvedAddress.toLowerCase()) {
@@ -63,7 +61,6 @@ const UrlForm = ({ userAddress, isAuthenticated }) => {
         return false;
       }
     } catch {
-      // console.error('Error verifying ENS domain ownership:', error);
       toast.error('Error verifying ENS domain ownership.');
       return false;
     }
