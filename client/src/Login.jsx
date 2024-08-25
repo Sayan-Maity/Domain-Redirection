@@ -38,7 +38,7 @@ const Login = ({
       const address = await signer.getAddress();
       if (address) {
         setUserAddress(address);
-        setLoading(false);
+        // setLoading(false);
       }
 
       // Get nonce:
