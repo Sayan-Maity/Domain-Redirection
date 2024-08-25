@@ -16,7 +16,7 @@ const UrlForm = ({ userAddress, isAuthenticated }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if(!userAddress || !isAuthenticated) {
+    if (!userAddress || !isAuthenticated) {
       toast.error('Please connect your wallet first!');
       return;
     }

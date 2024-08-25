@@ -12,7 +12,6 @@ const Login = ({
   isAuthenticated,
   setIsAuthenticated
 }) => {
-  // const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(false);
   const BACKEND_ENDPOINT = import.meta.env.VITE_BACKEND_URL;
 
