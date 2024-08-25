@@ -107,9 +107,9 @@ const Login = ({ userAddress, setUserAddress }) => {
               </div>
               <span>Connecting</span>
             </div>
-          ) :
+          ) : (
             <span>Connect</span>
-          }</button>
+          )}</button>
       )}
     </div>
   );
