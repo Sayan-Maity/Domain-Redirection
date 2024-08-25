@@ -81,7 +81,7 @@ const Login = ({ userAddress, setUserAddress }) => {
   return (
     <div className='flex items-center justify-center gap-4'>
       {isAuthenticated ? (
-        <div>
+        <div className='flex gap-4'>
           <span
             title='address'
             className='bg-[#342718] text-[#EBB94C] py-3 px-6 rounded-full'
@@ -89,7 +89,7 @@ const Login = ({ userAddress, setUserAddress }) => {
           <button
             onClick={handleLogout}
             title='Logout'
-            className='bg-[#342718] text-[#EBB94C] py-3 px-6 rounded-full ml-4'
+            className='bg-[#342718] text-[#EBB94C] py-3 px-6 rounded-full'
           >
             Logout
           </button>
