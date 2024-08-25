@@ -4,9 +4,15 @@ import { Web3Provider } from "@ethersproject/providers";
 import { shortenString } from './utils';
 import { toast } from 'react-hot-toast'
 import Spinner from './assets/SVGs/Spinner.svg'
+import axios from 'axios'
 
-const Login = ({ userAddress, setUserAddress }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+const Login = ({
+  userAddress,
+  setUserAddress,
+  isAuthenticated,
+  setIsAuthenticated
+}) => {
+  // const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(false);
   const BACKEND_ENDPOINT = import.meta.env.VITE_BACKEND_URL;
 
@@ -18,16 +24,35 @@ const Login = ({ userAddress, setUserAddress }) => {
 
     try {
       setLoading(true);
+
       const provider = new Web3Provider(window.ethereum);
-      await provider.send("eth_requestAccounts", []);
+
+      try {
+        await provider.send("eth_requestAccounts", []);
+      } catch (error) {
+        toast.error("User rejected the request.");
+      }
+
+      // Get signer and address:
       const signer = provider.getSigner();
       const address = await signer.getAddress();
-      if (address) setUserAddress(address);
+      if (address) {
+        setUserAddress(address);
+        setLoading(false);
+      }
 
-      const nonceRes = await fetch(`${BACKEND_ENDPOINT}/api/auth/nonce`);
-      const { nonce } = await nonceRes.json();
+      // Get nonce:
+      let nonce;
+      try {
+        const nonceRes = await axios.get(`${BACKEND_ENDPOINT}/api/auth/nonce`, {
+          withCredentials: true,
+        });
+        nonce = nonceRes.data.nonce;
+      } catch (error) {
+        toast.error("Failed to fetch nonce from backend.");
+      }
 
-      // Create the SIWE message
+      // Create SIWE message
       const siweMessage = new SiweMessage({
         domain: window.location.host,
         address,
@@ -39,33 +64,42 @@ const Login = ({ userAddress, setUserAddress }) => {
       });
 
       // Sign the message
-      const message = siweMessage.prepareMessage();
-      const signature = await signer.signMessage(message);
+      let signature;
+      try {
+        const message = siweMessage.prepareMessage();
+        signature = await signer.signMessage(message);
+      } catch (error) {
+        toast.error("Message signing failed.");
+      }
 
       // Verify the signed message with the backend
-      const verifyResponse = await fetch(`${BACKEND_ENDPOINT}/api/auth/verify`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ message, signature }),
-        credentials: 'include',
-      });
+      try {
+        const verifyResponse = await axios.post(`${BACKEND_ENDPOINT}/api/auth/verify`, {
+          message: siweMessage.prepareMessage(),
+          signature
+        }, {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          withCredentials: true,
+        });
 
-      const result = await verifyResponse.json();
-      if (result.success) {
-        setLoading(false);
-        setIsAuthenticated(true);
-        toast.success("Metamask connected successfully!");
-      } else {
-        setLoading(false);
-        toast.error("Couldn't connect, Authentication failed!");
+        if (verifyResponse.data.success) {
+          setIsAuthenticated(true);
+          toast.success("Metamask connected successfully!");
+        } else {
+          toast.error("Couldn't connect, Authentication failed!");
+        }
+      } catch (error) {
+        toast.error("Verification with backend failed.");
       }
     } catch (error) {
+      toast.error(`Error during authentication: ${error.message}`);
+    } finally {
       setLoading(false);
-      toast.error("Error during authentication:", error);
     }
   };
+
 
   const handleLogout = async () => {
     try {
@@ -80,7 +114,7 @@ const Login = ({ userAddress, setUserAddress }) => {
 
   return (
     <div className='flex items-center justify-center gap-4'>
-      {isAuthenticated ? (
+      {isAuthenticated && userAddress ? (
         <div className='flex gap-4'>
           <span
             title='address'

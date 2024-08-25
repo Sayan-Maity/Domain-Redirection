@@ -4,7 +4,7 @@ import { InfuraProvider } from '@ethersproject/providers';
 import toast from 'react-hot-toast';
 import Spinner from "./assets/SVGs/Spinner.svg"
 
-const UrlForm = ({ userAddress }) => {
+const UrlForm = ({ userAddress, isAuthenticated }) => {
   const [sourceUrl, setSourceUrl] = useState('');
   const [destinationUrl, setDestinationUrl] = useState('');
   const [customUrl, setCustomUrl] = useState('');
@@ -16,7 +16,7 @@ const UrlForm = ({ userAddress }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if(!userAddress) {
+    if(!userAddress || !isAuthenticated) {
       toast.error('Please connect your wallet first!');
       return;
     }
