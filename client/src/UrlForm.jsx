@@ -2,6 +2,7 @@ import { useState } from 'react';
 import axios from 'axios';
 import { InfuraProvider } from '@ethersproject/providers';
 import toast from 'react-hot-toast';
+import Spinner from "./assets/SVGs/Spinner.svg"
 
 const UrlForm = ({ userAddress }) => {
   const [sourceUrl, setSourceUrl] = useState('');
@@ -41,7 +42,7 @@ const UrlForm = ({ userAddress }) => {
           toast.error('Error creating redirect URL.');
         }
       } else {
-        toast.error('You do not own the given ENS domain.');
+        toast.error('You do not own this ENS domain.');
         setLoading(false);
       }
     } catch {
@@ -95,7 +96,14 @@ const UrlForm = ({ userAddress }) => {
         <button
           type="submit"
           className='bg-[#342718] text-[#EBB94C] py-3 px-6 rounded-full w-fit'
-        >{loading ? 'Creating' : 'Create Redirect'}</button>
+        >{loading ? (
+          <div className="flex justify-center items-center gap-2">
+            <div>
+              <img src={Spinner} alt="spinner" />
+            </div>
+            <span>Please Wait</span>
+          </div>
+        ) : 'Create Redirect'}</button>
       </form>
       <div className="w-[50%] flex items-center justify-center">
         {customUrl && (

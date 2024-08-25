@@ -3,6 +3,7 @@ import { SiweMessage } from 'siwe';
 import { Web3Provider } from "@ethersproject/providers";
 import { shortenString } from './utils';
 import { toast } from 'react-hot-toast'
+import Spinner from './assets/SVGs/Spinner.svg'
 
 const Login = ({ userAddress, setUserAddress }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -66,23 +67,50 @@ const Login = ({ userAddress, setUserAddress }) => {
     }
   };
 
+  const handleLogout = async () => {
+    try {
+      setIsAuthenticated(false);
+      setUserAddress('');
+      toast.success("Logged out successfully!");
+    } catch (error) {
+      toast.error("Error during logout:", error);
+    }
+  };
 
 
   return (
     <div className='flex items-center justify-center gap-4'>
-      <div>
-        {isAuthenticated && (
+      {isAuthenticated ? (
+        <div>
           <span
             title='address'
-            className='bg-[#342718] text-[#EBB94C] py-2 px-6 rounded-full'
+            className='bg-[#342718] text-[#EBB94C] py-3 px-6 rounded-full'
           >{shortenString(userAddress)}</span>
-        )}
-      </div>
-      <button
-        onClick={handleLogin}
-        title='Connect with MetaMask'
-        className='bg-[#342718] text-[#EBB94C] py-3 px-6 rounded-full'
-      >{loading ? 'Connecting...' : 'Connect'}</button>
+          <button
+            onClick={handleLogout}
+            title='Logout'
+            className='bg-[#342718] text-[#EBB94C] py-3 px-6 rounded-full ml-4'
+          >
+            Logout
+          </button>
+        </div>
+      ) : (
+        <button
+          onClick={handleLogin}
+          title='Connect with MetaMask'
+          className='bg-[#342718] text-[#EBB94C] py-3 px-6 rounded-full'
+        >
+          {loading ? (
+            <div className="flex justify-center items-center gap-2">
+              <div>
+                <img src={Spinner} alt="spinner" />
+              </div>
+              <span>Connecting</span>
+            </div>
+          ) :
+            <span>Connect</span>
+          }</button>
+      )}
     </div>
   );
 };
